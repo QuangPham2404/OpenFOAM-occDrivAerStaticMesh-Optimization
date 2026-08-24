@@ -1,0 +1,41 @@
+#!/bin/bash
+# run.pbs — template run script for an OpenFOAM (SPUMA) experiment.
+# Expected working directory: experiments/<run-name>
+# Inputs: successful simpleFoam binary, case files, decomposition settings.
+# Outputs: logFiles/50_simpleFoam.*.log and postProcessing/forceCoeffsAll/*/coefficient.dat
+
+# --- 1. PBS job name, output/error paths, resource requests ---
+#PBS -N <run_name>_v1
+#PBS -o outputs/<run_name>_v1.o
+#PBS -e outputs/<run_name>_v1.e
+#PBS -l nodes=2:ppn=96
+#PBS -l walltime=01:00:00
+#PBS -l mem=64gb
+#PROJECT_PLACEHOLDER
+
+# --- 2. shell safety settings ---
+set -euo pipefail
+
+# --- 3. change to the submitted script directory ---
+cd "$PBS_O_WORKDIR"
+
+# --- 4. define and print experiment metadata ---
+RUN_NAME="<run_name>"
+ATTEMPT="${RUN_NAME}_v1"
+echo "Run name: ${RUN_NAME}"
+echo "Attempt:  ${ATTEMPT}"
+echo "PBS job:  ${PBS_JOBID:-unknown}"
+echo "Nodes:    $(hostname) allocation"
+
+# --- 5. define and verify the successful build binary ---
+# SIMPLEFOAM_BIN=$FOAM_APPBIN/simpleFoam
+# [ -x "$SIMPLEFOAM_BIN" ] || { echo "ERROR: simpleFoam not found at $SIMPLEFOAM_BIN"; exit 1; }
+
+# --- 6. print environment and tool versions ---
+# module load gcc openmpi
+# source /path/SPUMA-0.2-v2412/etc/bashrc
+# which mpirun && mpirun --version
+
+# --- 7. execute the application through the required launcher ---
+# sed -i "s/^nCores.*/nCores <nCores>;/" system/include/caseDefinition
+# ./Allrun
